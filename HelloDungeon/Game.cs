@@ -39,7 +39,7 @@ namespace HelloDungeon
             return newhealth;
         }
 
-        void Fight(Monster monster1, Monster monster2)
+        void Fight(ref Monster monster1, ref Monster monster2)
         {
             PrintStats(monster1);
             PrintStats(monster2);

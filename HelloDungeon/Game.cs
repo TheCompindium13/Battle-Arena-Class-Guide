@@ -55,7 +55,8 @@ namespace HelloDungeon
             return Playerchoice;
 
         }
-
+        
+        
         //Character selection scene 
         void Characterselectionscene()
         {
@@ -182,7 +183,18 @@ namespace HelloDungeon
             }
 
         }
+        
 
+        void Arraytest(int[] numbers)
+        {
+            for (int i = 0; i < numbers.Length; i++)
+            {
+                Console.WriteLine(numbers[i]);
+                Console.ReadLine();
+
+            }
+            return;
+        }
         //See this screen when you win
         void Winresultscene()
         {
@@ -269,12 +281,17 @@ namespace HelloDungeon
         //Void run begins here
         public void Run()
         {
-            
+
             start();
 
             //Gameloop Starts
             while (GameOver == false)
             {
+                //int[] grades = new int[5] { 23, 43, 56, 7, 26 };
+                Arraytest();
+
+
+
                 update();
             } 
             end();

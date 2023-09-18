@@ -38,6 +38,8 @@ namespace HelloDungeon
         Character JoePablo;
         Character JOHNcena;
         Character LJDBiden;
+        Character[] Enemies;
+        int currentenemyindex = 0;
 
         //Player
         Character Player;
@@ -175,9 +177,9 @@ namespace HelloDungeon
         //The battle logic
         void Battlescene()
         {
-            Fight(ref LJDBiden);
+            Fight(ref Enemies [currentenemyindex]);
 
-            if (LJDBiden.Health <= 0 || Player.Health <= 0)
+            if (Enemies[currentenemyindex].Health <= 0 || Player.Health <= 0)
             {
                 Currentscene = 3;
             }
@@ -187,32 +189,68 @@ namespace HelloDungeon
 
         void Arraytest(int[] numbers)
         {
+            int sum = 0;
             for (int i = 0; i < numbers.Length; i++)
             {
-                Console.WriteLine(numbers[i]);
-                Console.ReadLine();
+                if (numbers[i] < sum)
+                {
 
+                }
+                else
+                {
+                    sum = numbers[i];
+                }
             }
+            Console.WriteLine(sum);
+            Console.ReadLine();
+
             return;
         }
         //See this screen when you win
         void Winresultscene()
         {
-            if (Player.Health > 0 && LJDBiden.Health <= 0)
+            if (Player.Health > 0 && Enemies[currentenemyindex].Health <= 0)
             {
                 Console.WriteLine("The Winner Is: " + Player.Name);
+                Currentscene = 1;
+                currentenemyindex++;
+                if (currentenemyindex >= Enemies.Length)
+                {
+                    GameOver = true;
+                }
             }
-            else if (LJDBiden.Health > 0 && Player.Health <= 0)
+            else if (Enemies[currentenemyindex].Health > 0 && Player.Health <= 0)
             {
-                Console.WriteLine("The Winner Is: " + LJDBiden.Name);
+                Console.WriteLine("The Winner Is: " + Enemies[currentenemyindex].Name);
+                Currentscene = 4;
             }
             Console.ReadKey(true);
             Console.Clear();
         }
 
+        void Endgamescene()
+        {
+            string Playerchoice = Getinput("You are dead", "Yes", "No", "Nope");
+
+            if (Playerchoice == "1")
+            {
+                Currentscene = 0;
+            }
+            else if (Playerchoice == "2")
+            {
+                GameOver = true;
+            }
+            else if (Playerchoice == "3")
+            {
+                GameOver = true;
+            }
+        }
+
         //Start non-visable elements
         void start()
         {
+
+
 
             //Weapons Stats
             WeaponBasics MagicBall;
@@ -249,6 +287,8 @@ namespace HelloDungeon
             LJDBiden.Stamina = -0f;
             LJDBiden.CurrentWeapon = MagicBall;
 
+            Enemies = new Character[3] {JoePablo, JOHNcena, LJDBiden};
+
         }
 
         //The logic for update
@@ -270,12 +310,28 @@ namespace HelloDungeon
             {
                 Winresultscene();
             }
+            else if (Currentscene == 4)
+            {
+                Endgamescene();
+            }
         }
 
         //End logic
         void end()
         {
             Console.WriteLine("Thanks for playing");
+        }
+        void Printlargest(int[] numbers)
+        {
+            int biggestnumber = numbers[0];
+
+            for (int i = 1; i < numbers.Length; i++)
+            {
+                if (numbers[i] > biggestnumber)
+                {
+                    biggestnumber = numbers[i];
+                }
+            }
         }
 
         //Void run begins here
@@ -287,8 +343,9 @@ namespace HelloDungeon
             //Gameloop Starts
             while (GameOver == false)
             {
-                //int[] grades = new int[5] { 23, 43, 56, 7, 26 };
-                Arraytest();
+                
+                //int[] grades = new int[5] {23, 43, 56, 7, 260};
+                //Arraytest(grades);
 
 
 

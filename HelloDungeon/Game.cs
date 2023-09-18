@@ -6,28 +6,21 @@ using System.Threading.Tasks;
 
 namespace HelloDungeon
 {
-    class Game
+    //Basic weapon structure
+    struct WeaponBasics
     {
+        public string WeaponName;
+        public float WeaponDamage;
+        public bool WeaponTalks;
+
+    }
+    class Game
+    { 
 
         //Character structure
-        struct Character
-        {
-            public string Name;
-            public float Health;
-            public float Damage;
-            public float Defense;
-            public float Stamina;
-            public WeaponBasics CurrentWeapon;
-        }
 
-        //Basic weapon structure
-        struct WeaponBasics
-        {
-            public string WeaponName;
-            public float WeaponDamage;
-            public bool WeaponTalks;
 
-        }
+
 
         //Basic variables
         bool GameOver;
@@ -84,7 +77,7 @@ namespace HelloDungeon
                     Console.Clear();
                     return;
                 }
-                PrintStats(Player);
+                Player.PrintStats();
                 Console.ReadKey(true);
                 Console.Clear();
                 Currentscene = 1;
@@ -93,21 +86,12 @@ namespace HelloDungeon
            
         }
 
-    //Character stats    
-    void PrintStats(Character monster)
-        {
-            Console.WriteLine("Name: " + monster.Name);
-            Console.WriteLine("Health: " + monster.Health);
-            Console.WriteLine("Damage: " + monster.Damage);
-            Console.WriteLine("Defense: " + monster.Defense);
-            Console.WriteLine("Stamina: " + monster.Stamina);
-            Console.WriteLine("Current Weapon: " + monster.CurrentWeapon.WeaponName);
-        }
+
 
         //How the healing works
         float Heal(Character monster, float healamount)
         {
-            float newhealth = monster.Health * healamount;
+            float newhealth = monster.GetHealth() * healamount;
 
             return newhealth;
         }
@@ -118,30 +102,24 @@ namespace HelloDungeon
             Heal(Player, 1000);
         }
 
-        //Attack logic
-        float Attack(Character attacker, Character defender)
-        {
-            float totaldamage = attacker.CurrentWeapon.WeaponDamage + attacker.Damage - defender.Defense ;
-            
-            return defender.Health - totaldamage;
-        }
+
 
         //Fighting logic for fight
         void Fight(ref Character monster2)
         {
             
-            PrintStats(Player);
-            PrintStats(monster2);
+            Player.PrintStats();
+            monster2.PrintStats();
             bool Isdefending = false;
 
             string Battlechoice = Getinput("Choose action", " Attack", " Defend", " Run");
             if (Battlechoice == "1")
             {
-                monster2.Health = Attack(Player, monster2);
+                monster2.takedamage(Player.GetDamage());
                 Console.WriteLine("You hit the monster");
 
 
-                if (monster2.Health <= 0)
+                if (monster2.GetHealth() <= 0)
                 {
                     return;
                 }
@@ -149,7 +127,7 @@ namespace HelloDungeon
             else if (Battlechoice == "2")
             {
                 Isdefending = true;
-                Player.Defense *= 5;
+                Player.BoostDefense();
                 Console.WriteLine("You brace for impact");
             }
             else if(Battlechoice == "3")
@@ -159,18 +137,18 @@ namespace HelloDungeon
                 return;
             }
 
-            PrintStats(Player);
-            PrintStats(monster2);
+            Player.PrintStats();
+            monster2.PrintStats();
 
-            Console.WriteLine(monster2.Name + " Punches " + Player.Name);
-            Player.Health = Attack(monster2, Player);
+            Console.WriteLine(monster2.GetName() + " Punches " + Player.GetName());
+            Player.takedamage(monster2.GetDamage());
             Console.ReadKey(true);
 
-            PrintStats(Player);
-            PrintStats(monster2);
+            Player.PrintStats();
+            monster2.PrintStats();
             if (Isdefending = true)
             {
-                Player.Defense /= 5;
+                Player.LowerDefense();
             }
         }
 
@@ -179,7 +157,7 @@ namespace HelloDungeon
         {
             Fight(ref Enemies [currentenemyindex]);
 
-            if (Enemies[currentenemyindex].Health <= 0 || Player.Health <= 0)
+            if (Enemies[currentenemyindex].GetHealth() <= 0 || Player.GetHealth() <= 0)
             {
                 Currentscene = 3;
             }
@@ -209,9 +187,9 @@ namespace HelloDungeon
         //See this screen when you win
         void Winresultscene()
         {
-            if (Player.Health > 0 && Enemies[currentenemyindex].Health <= 0)
+            if (Player.GetHealth() > 0 && Enemies[currentenemyindex].GetHealth() <= 0)
             {
-                Console.WriteLine("The Winner Is: " + Player.Name);
+                Console.WriteLine("The Winner Is: " + Player.GetName());
                 Currentscene = 1;
                 currentenemyindex++;
                 if (currentenemyindex >= Enemies.Length)
@@ -219,9 +197,9 @@ namespace HelloDungeon
                     GameOver = true;
                 }
             }
-            else if (Enemies[currentenemyindex].Health > 0 && Player.Health <= 0)
+            else if (Enemies[currentenemyindex].GetHealth() > 0 && Player.GetHealth() <= 0)
             {
-                Console.WriteLine("The Winner Is: " + Enemies[currentenemyindex].Name);
+                Console.WriteLine("The Winner Is: " + Enemies[currentenemyindex].GetName());
                 Currentscene = 4;
             }
             Console.ReadKey(true);
@@ -263,29 +241,11 @@ namespace HelloDungeon
             TheseHands.WeaponTalks = false;
             TheseHands.WeaponDamage = 500;
 
-            //Monster Stats
-            JoePablo.Name = "JoePablo";
-            JoePablo.Health = 21799f;
-            JoePablo.Damage = 69.420f;
-            JoePablo.Defense = .9f;
-            JoePablo.Stamina = 3f;
-            JoePablo.CurrentWeapon = TheseHands;
-
-
-            JOHNcena.Name = "JOHN... cena";
-            JOHNcena.Health = 21800f;
-            JOHNcena.Damage = 69.421f;
-            JOHNcena.Defense = 1.9f;
-            JOHNcena.Stamina = 4f;
-            JOHNcena.CurrentWeapon = TheseHands;
-
-
-            LJDBiden.Name = "LucyJillDirtbagBiden";
-            LJDBiden.Health = 21798f;
-            LJDBiden.Damage = 69.419f;
-            LJDBiden.Defense = .1f;
-            LJDBiden.Stamina = -0f;
-            LJDBiden.CurrentWeapon = MagicBall;
+            JoePablo = new Character("JoePablo", 21799f, 69.420f, .9f, 3f, TheseHands);
+            
+            JoePablo = new Character("JOHN... cena", 21800f, 69.421f, 1.9f, 4f, TheseHands);
+            
+            JoePablo = new Character("LucyJillDirtbagBiden", 21798f, 69.419f, .1f, -0f, MagicBall);
 
             Enemies = new Character[3] {JoePablo, JOHNcena, LJDBiden};
 
@@ -321,18 +281,18 @@ namespace HelloDungeon
         {
             Console.WriteLine("Thanks for playing");
         }
-        void Printlargest(int[] numbers)
-        {
-            int biggestnumber = numbers[0];
+        //void Printlargest(int[] numbers)
+        //{
+        //    int biggestnumber = numbers[0];
 
-            for (int i = 1; i < numbers.Length; i++)
-            {
-                if (numbers[i] > biggestnumber)
-                {
-                    biggestnumber = numbers[i];
-                }
-            }
-        }
+        //    for (int i = 1; i < numbers.Length; i++)
+        //    {
+        //        if (numbers[i] > biggestnumber)
+        //        {
+        //            biggestnumber = numbers[i];
+        //        }
+        //    }
+        //}
 
         //Void run begins here
         public void Run()

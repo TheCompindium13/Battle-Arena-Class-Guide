@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
+using System.Xml.Linq;
 
 namespace HelloDungeon
 {
@@ -17,18 +19,24 @@ namespace HelloDungeon
         private WeaponBasics _currentWeapon;
 
         //Character stats    
-        public void PrintStats()
+        public virtual void PrintStats()
         {
             Console.WriteLine("Name: " + _name);
             Console.WriteLine("Health: " + _health);
             Console.WriteLine("Damage: " + _damage);
             Console.WriteLine("Defense: " + _defense);
-
             Console.WriteLine("Stamina: " + _stamina);
             Console.WriteLine("Current Weapon: " + _currentWeapon.WeaponName);
 
         }
-
+        public Character()
+        {
+            _name = "";
+            _health = 0f;
+            _damage = 0f;
+            _defense = 0f;
+            _stamina = 0f;
+        }
         public Character(string name, float health, float damage, float defense, float stamina, WeaponBasics currentweapon)
         {
             _name = name;
@@ -43,6 +51,10 @@ namespace HelloDungeon
         {
             return _health;
         }
+        public float GetStamina()
+        {
+            return _stamina;
+        }
 
         public WeaponBasics GetCurrentWeapon()
         {
@@ -53,7 +65,10 @@ namespace HelloDungeon
         {
             return _damage;
         }
-
+        public float GetDefense()
+        {
+            return _defense;
+        }
         public void BoostDefense()
         {
             _defense += _defenseboost;

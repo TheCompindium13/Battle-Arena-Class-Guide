@@ -25,49 +25,46 @@ namespace HelloDungeon
         //Basic variables
         bool GameOver;
         int Currentscene = 0;
-        string Playerchoice = "";
+        string _Playerchoice = "";
+
         
         //Monsters
         Character JoePablo;
         Character JOHNcena;
         Character LJDBiden;
+        Character Traveler;
         Character[] Enemies;
         int currentenemyindex = 0;
 
-        //Player
-        Character Player;
+        //PlayerCharacter
+        Player PlayerCharacter;
 
-        //How to create desecions
-        string Getinput(string prompt, string option1, string option2, string option3)
-        {
-            Console.WriteLine(prompt);
-            Console.WriteLine("1." + option1);
-            Console.WriteLine("2." + option2);
-            Console.WriteLine("3." + option3);
 
-            Playerchoice = Console.ReadLine();
-
-            return Playerchoice;
-
-        }
         
         
         //Character selection scene 
         void Characterselectionscene()
         {
-            string characterchoice = Getinput("Choose your character", " JoePablo", " JOHN... cena", " LucyJillDirtbagBiden");
+            PlayerCharacter = new Player();
+
+            string characterchoice = PlayerCharacter.Getinput("Choose your character", JoePablo.GetName(), JOHNcena.GetName(), LJDBiden.GetName(), Traveler.GetName());
             {
-                if (Playerchoice == "1")
+
+                if (characterchoice == "1")
                 {
-                    Player = JoePablo;
+                    PlayerCharacter = new Player(JoePablo.GetName(), JoePablo.GetHealth(), JoePablo.GetDamage(), JoePablo.GetDefense(), JoePablo.GetStamina(), JoePablo.GetCurrentWeapon());
                 }
-                else if (Playerchoice == "2")
+                else if (characterchoice == "2")
                 {
-                    Player = JOHNcena;
+                    PlayerCharacter = new Player(JOHNcena.GetName(), JOHNcena.GetHealth(), JOHNcena.GetDamage(), JOHNcena.GetDefense(), JOHNcena.GetStamina(), JOHNcena.GetCurrentWeapon());
                 }
-                else if (Playerchoice == "3")
+                else if (characterchoice == "3")
                 {
-                    Player = LJDBiden;
+                    PlayerCharacter = new Player(LJDBiden.GetName(), LJDBiden.GetHealth(), LJDBiden.GetDamage(), LJDBiden.GetDefense(), LJDBiden.GetStamina(), LJDBiden.GetCurrentWeapon());
+                }
+                else if (characterchoice == "4")
+                {
+                    PlayerCharacter = new Player(Traveler.GetName(), Traveler.GetHealth(), Traveler.GetDamage(), Traveler.GetDefense(), Traveler.GetStamina(), Traveler.GetCurrentWeapon());
                 }
                 else
                 {
@@ -77,7 +74,7 @@ namespace HelloDungeon
                     Console.Clear();
                     return;
                 }
-                Player.PrintStats();
+                PlayerCharacter.PrintStats();
                 Console.ReadKey(true);
                 Console.Clear();
                 Currentscene = 1;
@@ -89,9 +86,9 @@ namespace HelloDungeon
 
 
         //How the healing works
-        float Heal(Character monster, float healamount)
+        float Heal(float healamount)
         {
-            float newhealth = monster.GetHealth() * healamount;
+            float newhealth = PlayerCharacter.GetHealth() * healamount;
 
             return newhealth;
         }
@@ -99,7 +96,7 @@ namespace HelloDungeon
         //The healing scene starts here
         void Healscene()
         {
-            Heal(Player, 1000);
+            Heal(1000);
         }
 
 
@@ -108,14 +105,14 @@ namespace HelloDungeon
         void Fight(ref Character monster2)
         {
             
-            Player.PrintStats();
+            PlayerCharacter.PrintStats();
             monster2.PrintStats();
             bool Isdefending = false;
 
-            string Battlechoice = Getinput("Choose action", " Attack", " Defend", " Run");
+            string Battlechoice = PlayerCharacter.Getinput("Choose action", " Attack", " Defend", " Run");
             if (Battlechoice == "1")
             {
-                monster2.takedamage(Player.GetDamage());
+                monster2.takedamage(PlayerCharacter.GetDamage());
                 Console.WriteLine("You hit the monster");
 
 
@@ -127,28 +124,27 @@ namespace HelloDungeon
             else if (Battlechoice == "2")
             {
                 Isdefending = true;
-                Player.BoostDefense();
+                PlayerCharacter.BoostDefense();
                 Console.WriteLine("You brace for impact");
             }
-            else if(Battlechoice == "3")
+            else if (Battlechoice == "3")
             {
                 Console.WriteLine("You ran... coward");
                 Currentscene = 3;
                 return;
             }
-
-            Player.PrintStats();
+            PlayerCharacter.PrintStats();
             monster2.PrintStats();
 
-            Console.WriteLine(monster2.GetName() + " Punches " + Player.GetName());
-            Player.takedamage(monster2.GetDamage());
+            Console.WriteLine(monster2.GetName() + " Punches " + PlayerCharacter.GetName());
+            PlayerCharacter.takedamage(monster2.GetDamage());
             Console.ReadKey(true);
 
-            Player.PrintStats();
+            PlayerCharacter.PrintStats();
             monster2.PrintStats();
             if (Isdefending = true)
             {
-                Player.LowerDefense();
+                PlayerCharacter.LowerDefense();
             }
         }
 
@@ -157,39 +153,19 @@ namespace HelloDungeon
         {
             Fight(ref Enemies [currentenemyindex]);
 
-            if (Enemies[currentenemyindex].GetHealth() <= 0 || Player.GetHealth() <= 0)
+            if (Enemies[currentenemyindex].GetHealth() <= 0 || PlayerCharacter.GetHealth() <= 0)
             {
                 Currentscene = 3;
             }
 
         }
         
-
-        void Arraytest(int[] numbers)
-        {
-            int sum = 0;
-            for (int i = 0; i < numbers.Length; i++)
-            {
-                if (numbers[i] < sum)
-                {
-
-                }
-                else
-                {
-                    sum = numbers[i];
-                }
-            }
-            Console.WriteLine(sum);
-            Console.ReadLine();
-
-            return;
-        }
         //See this screen when you win
         void Winresultscene()
         {
-            if (Player.GetHealth() > 0 && Enemies[currentenemyindex].GetHealth() <= 0)
+            if (PlayerCharacter.GetHealth() > 0 && Enemies[currentenemyindex].GetHealth() <= 0)
             {
-                Console.WriteLine("The Winner Is: " + Player.GetName());
+                Console.WriteLine("The Winner Is: " + PlayerCharacter.GetName());
                 Currentscene = 1;
                 currentenemyindex++;
                 if (currentenemyindex >= Enemies.Length)
@@ -197,7 +173,7 @@ namespace HelloDungeon
                     GameOver = true;
                 }
             }
-            else if (Enemies[currentenemyindex].GetHealth() > 0 && Player.GetHealth() <= 0)
+            else if (Enemies[currentenemyindex].GetHealth() > 0 && PlayerCharacter.GetHealth() <= 0)
             {
                 Console.WriteLine("The Winner Is: " + Enemies[currentenemyindex].GetName());
                 Currentscene = 4;
@@ -208,7 +184,7 @@ namespace HelloDungeon
 
         void Endgamescene()
         {
-            string Playerchoice = Getinput("You are dead", "Yes", "No", "Nope");
+            string Playerchoice = PlayerCharacter.Getinput("You are dead", " Yes", " No");
 
             if (Playerchoice == "1")
             {
@@ -218,17 +194,11 @@ namespace HelloDungeon
             {
                 GameOver = true;
             }
-            else if (Playerchoice == "3")
-            {
-                GameOver = true;
-            }
         }
 
         //Start non-visable elements
         void start()
         {
-
-
 
             //Weapons Stats
             WeaponBasics MagicBall;
@@ -243,11 +213,13 @@ namespace HelloDungeon
 
             JoePablo = new Character("JoePablo", 21799f, 69.420f, .9f, 3f, TheseHands);
             
-            JoePablo = new Character("JOHN... cena", 21800f, 69.421f, 1.9f, 4f, TheseHands);
-            
-            JoePablo = new Character("LucyJillDirtbagBiden", 21798f, 69.419f, .1f, -0f, MagicBall);
+            JOHNcena = new Character("JOHN... cena", 21800f, 69.421f, 1.9f, 4f, TheseHands);
 
-            Enemies = new Character[3] {JoePablo, JOHNcena, LJDBiden};
+            LJDBiden = new Character("LucyJillDirtbagBiden", 21798f, 69.419f, .1f, -0f, MagicBall);
+
+            Traveler = new Character("The Traveler", 450324f, 461.99f, 5f, 80f, TheseHands);
+
+            Enemies = new Character[4] {JoePablo, JOHNcena, LJDBiden, Traveler};
 
         }
 
@@ -281,18 +253,6 @@ namespace HelloDungeon
         {
             Console.WriteLine("Thanks for playing");
         }
-        //void Printlargest(int[] numbers)
-        //{
-        //    int biggestnumber = numbers[0];
-
-        //    for (int i = 1; i < numbers.Length; i++)
-        //    {
-        //        if (numbers[i] > biggestnumber)
-        //        {
-        //            biggestnumber = numbers[i];
-        //        }
-        //    }
-        //}
 
         //Void run begins here
         public void Run()
@@ -303,12 +263,6 @@ namespace HelloDungeon
             //Gameloop Starts
             while (GameOver == false)
             {
-                
-                //int[] grades = new int[5] {23, 43, 56, 7, 260};
-                //Arraytest(grades);
-
-
-
                 update();
             } 
             end();
